@@ -181,6 +181,7 @@ ah_encrypt_inline (vlib_main_t * vm,
 	{
 	  vnet_buffer (b[0])->ipsec.thread_index = sa0->thread_index;
 	  next[0] = AH_ENCRYPT_NEXT_HANDOFF;
+	  pd->skip = 1;
 	  goto next;
 	}
 
@@ -367,7 +368,7 @@ ah_encrypt_inline (vlib_main_t * vm,
       if (!ipsec_sa_is_set_IS_TUNNEL (sa0))
 	{
 	  next[0] = AH_ENCRYPT_NEXT_INTERFACE_OUTPUT;
-	  vlib_buffer_advance (b[0], -sizeof (ethernet_header_t));
+	  vlib_buffer_advance (b[0], -(vnet_buffer (b[0])->ip.save_rewrite_length));
 	}
 
     next:
